@@ -20,3 +20,6 @@ jobs:
           openai_light_model: gpt-4o
           openai_heavy_model: gpt-4o
           language: ja-JP
+          review_comment_style: direct
+          path_filters: |
+            !**.md
