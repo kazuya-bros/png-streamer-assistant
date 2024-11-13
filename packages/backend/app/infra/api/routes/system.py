@@ -15,6 +15,13 @@ router = APIRouter(prefix="/system", tags=["system"])
     description="システムを開始し、IDLEモードに遷移します"
 )
 async def start_system():
+    current_state = state_manager.get_state()
+    if current_state != SystemState.STOP:
+        return SystemResponse(
+            status="error",
+            state=current_state,
+            message="システムは既に開始しています"
+        )
     state_manager.set_state(SystemState.IDLE)
     return SystemResponse(
         status="success",
@@ -29,6 +36,13 @@ async def start_system():
     description="システムを停止し、STOPモードに遷移します"
 )
 async def stop_system():
+    current_state = state_manager.get_state()
+    if current_state == SystemState.STOP:
+        return SystemResponse(
+            status="error",
+            state=current_state,
+            message="システムは既に停止しています"
+        )
     state_manager.set_state(SystemState.STOP)
     return SystemResponse(
         status="success",
@@ -43,6 +57,13 @@ async def stop_system():
     description="システムを一時停止します。実行中の処理は継続されます"
 )
 async def pause_system():
+    current_state = state_manager.get_state()
+    if current_state == SystemState.PAUSE:
+        return SystemResponse(
+            status="error",
+            state=current_state,
+            message="システムは既に一時停止しています"
+        )
     state_manager.set_state(SystemState.PAUSE)
     return SystemResponse(
         status="success",
@@ -57,6 +78,13 @@ async def pause_system():
     description="一時停止中のシステムを再開します"
 )
 async def resume_system():
+    current_state = state_manager.get_state()
+    if current_state != SystemState.PAUSE:
+        return SystemResponse(
+            status="error",
+            state=current_state,
+            message="システムは一時停止中ではありません"
+        )
     state_manager.set_state(SystemState.IDLE)
     return SystemResponse(
         status="success",
